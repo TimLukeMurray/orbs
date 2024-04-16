@@ -13,15 +13,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let gameOver = false;
     let won = false;
 
-    // Load the images for the orbs and the player
     let orbImage = new Image();
-    orbImage.src = 'A.jpg'; // Ensure this path is correct
+    orbImage.src = 'A.jpg';
 
     let playerImage = new Image();
-    playerImage.src = 'B.jpg'; // Ensure this path is correct
-    playerImage.onload = function() {
-        updateGame(); // Start the game loop after the player image is loaded
-    };
+    playerImage.src = 'B.jpg';
+
+    let fedImage = new Image();
+    fedImage.src = 'Fed.jpg';
+
+    let polImage = new Image();
+    polImage.src = 'Pol.jpg';
 
     let player = {
         x: 10,
@@ -37,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let sword = {
         x: player.x,
         y: player.y,
-        width: 40,
+        width: 200,
         height: 10,
         swinging: false,
         draw() {
@@ -73,6 +75,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateGame() {
         if (!gameOver) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the background images
+            ctx.drawImage(fedImage, 0, canvas.height - fedImage.height);
+            ctx.drawImage(polImage, canvas.width - polImage.width, 0);
+
             player.draw();
             sword.draw();
             balls.forEach(ball => {
@@ -103,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (balls.length === 0 && !gameOver) {
                 ctx.font = '30px Arial';
                 ctx.fillStyle = 'black';
-                ctx.fillText('ALL THE JOURNOS ARE DESTROYED', 200, 300);
+                ctx.fillText('ALL THE JOURNOS ARE GONE', 200, 300);
             }
 
             requestAnimationFrame(updateGame);
@@ -111,16 +118,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (won) {
                 ctx.font = '40px Arial';
                 ctx.fillStyle = 'green';
-                ctx.fillText('You made it to the police!', 250, 300);
+                ctx.fillText('Safety at the station!', 250, 300);
             } else {
                 ctx.font = '40px Arial';
                 ctx.fillStyle = 'red';
-                ctx.fillText('The extremely aggressive media!!', 150, 300);
+                ctx.fillText('DARN JOURNALISTS!', 250, 300);
             }
         }
     }
-
-    document.addEventListener('keydown', handleKeyDown);
 
     function handleKeyDown(e) {
         if (!gameOver) {
@@ -147,17 +152,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Add touch event listeners for mobile controls
-    leftBtn.addEventListener('touchstart', () => player.x -= player.speed);
-    upBtn.addEventListener('touchstart', () => player.y -= player.speed);
-    downBtn.addEventListener('touchstart', () => player.y += player.speed);
-    rightBtn.addEventListener('touchstart', () => player.x += player.speed);
-    spaceBtn.addEventListener('touchstart', () => {
-        sword.swinging = true;
-        setTimeout(() => sword.swinging = false, 300);
-    });
-
+    document.addEventListener('keydown', handleKeyDown);
     for (let i = 0; i < 5; i++) {
         createBall();
     }
+
+    updateGame();
 });
