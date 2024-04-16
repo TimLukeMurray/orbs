@@ -1,11 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
+    const leftBtn = document.getElementById('leftBtn');
+    const upBtn = document.getElementById('upBtn');
+    const downBtn = document.getElementById('downBtn');
+    const rightBtn = document.getElementById('rightBtn');
+    const spaceBtn = document.getElementById('spaceBtn');
 
     canvas.width = 800;
     canvas.height = 600;
 
-    let gameOver = false; // New variable to control game state
+    let gameOver = false;
 
     let player = {
         x: 100,
@@ -61,19 +66,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateGame() {
         if (!gameOver) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             player.draw();
             sword.draw();
             balls.forEach(ball => {
                 ball.x += ball.dx;
                 ball.y += ball.dy;
-
                 if (ball.x < 0 || ball.x > canvas.width) ball.dx *= -1;
                 if (ball.y < 0 || ball.y > canvas.height) ball.dy *= -1;
-
                 ball.draw();
 
-                // Check collision with sword
                 if (sword.swinging &&
                     ball.x < sword.x + sword.width &&
                     ball.x + ball.size > sword.x &&
@@ -82,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     balls = balls.filter(b => b !== ball);
                 }
 
-                // Check collision with player
                 if (checkCollision(player, ball)) {
                     gameOver = true;
                 }
@@ -122,14 +122,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(() => sword.swinging = false, 300);
                     break;
             }
-
-            // Update sword position
             sword.x = player.x + player.width / 2;
             sword.y = player.y;
         }
     }
 
     document.addEventListener('keydown', handleKeyDown);
+
+    // Attach mobile control events
+    leftBtn.addEventListener('touchstart', () => player.x -= player.speed);
+    upBtn.addEventListener('touchstart', () => player.y -= player.speed);
+    downBtn.addEventListener('touchstart', () => player.y += player.speed);
+    rightBtn.addEventListener('touchstart', () => player.x += player.speed);
+    spaceBtn.addEventListener('touchstart', () => {
+        sword.swinging = true;
+        setTimeout(() => sword.swinging = false, 300);
+    });
 
     for (let i = 0; i < 5; i++) {
         createBall();

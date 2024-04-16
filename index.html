@@ -5,12 +5,29 @@
 <title>Simple Sprite Game</title>
 <style>
   canvas { background: #eee; display: block; margin: 0 auto; }
-  #restartButton { display: block; margin: 20px auto; padding: 10px 20px; }
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+  button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    font-size: 16px;
+  }
 </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
-<button id="restartButton">Restart Game</button>
+<div class="controls">
+  <button id="leftBtn">Left</button>
+  <button id="upBtn">Up</button>
+  <button id="downBtn">Down</button>
+  <button id="rightBtn">Right</button>
+  <button id="spaceBtn">Attack</button>
+</div>
 <script src="game.js"></script>
 </body>
 </html>
