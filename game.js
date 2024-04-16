@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let orbImage = new Image();
     orbImage.src = 'A.jpg';
 
+    let targetBallImage = new Image();
+    targetBallImage.src = 'ten.jpg';
+
     let playerImage = new Image();
     playerImage.src = 'B.jpg';
 
@@ -65,6 +68,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function createTargetBall() {
+        let size = 20;
+        balls.push({
+            x: Math.random() * (canvas.width - size),
+            y: Math.random() * (canvas.height - size),
+            size: size,
+            update() {
+                let dx = player.x - this.x;
+                let dy = player.y - this.y;
+                let magnitude = 1.5*Math.sqrt(dx * dx + dy * dy);
+                this.x += (dx / magnitude) * 4;
+                this.y += (dy / magnitude) * 4;
+            },
+            draw() {
+                ctx.drawImage(targetBallImage, this.x, this.y, this.size, this.size);
+            }
+        });
+    }
+
     function checkCollision(player, ball) {
         return ball.x < player.x + player.width &&
                ball.x + ball.size > player.x &&
@@ -75,18 +97,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateGame() {
         if (!gameOver) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw the background images
             ctx.drawImage(fedImage, 0, canvas.height - fedImage.height);
             ctx.drawImage(polImage, canvas.width - polImage.width, 0);
-
             player.draw();
             sword.draw();
             balls.forEach(ball => {
-                ball.x += ball.dx;
-                ball.y += ball.dy;
-                if (ball.x < 0 || ball.x > canvas.width) ball.dx *= -1;
-                if (ball.y < 0 || ball.y > canvas.height) ball.dy *= -1;
+                if (ball.update) {
+                    ball.update();
+                } else {
+                    ball.x += ball.dx;
+                    ball.y += ball.dy;
+                    if (ball.x < 0 || ball.x > canvas.width) ball.dx *= -1;
+                    if (ball.y < 0 || ball.y > canvas.height) ball.dy *= -1;
+                }
                 ball.draw();
 
                 if (sword.swinging &&
@@ -127,6 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    document.addEventListener('keydown', handleKeyDown);
     function handleKeyDown(e) {
         if (!gameOver) {
             switch (e.keyCode) {
@@ -152,10 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    document.addEventListener('keydown', handleKeyDown);
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
         createBall();
     }
-
+    createTargetBall(); // Create a targeting ball
     updateGame();
 });
