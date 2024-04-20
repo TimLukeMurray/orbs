@@ -2,25 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Simple Sprite Game</title>
+<title>Basic Physics Simulator</title>
 <style>
-  canvas { background: #eee; display: block; margin: 0 auto; }
-  .controls {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-  }
-  button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    font-size: 16px;
-  }
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: black;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+    canvas {
+        border: 1px solid white;
+        margin-top: 20px;
+    }
+    .input-row {
+        margin: 10px;
+    }
+    button {
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
-<canvas id="gameCanvas"></canvas>
-<script src="game.js"></script>
+    <div id="inputs">
+        <div class="input-row">
+            Circle 1: Radius <input type="number" id="radius1" value="5"> Mass <input type="number" id="mass1" value="10">
+        </div>
+        <div class="input-row">
+            Circle 2: Radius <input type="number" id="radius2" value="5"> Mass <input type="number" id="mass2" value="10">
+        </div>
+        <div class="input-row">
+            Circle 3: Radius <input type="number" id="radius3" value="5"> Mass <input type="number" id="mass3" value="10">
+        </div>
+        <div class="input-row">
+            Circle 4: Radius <input type="number" id="radius4" value="5"> Mass <input type="number" id="mass4" value="10">
+        </div>
+        <div class="input-row">
+            Gravitational Constant (G): <input type="number" id="gravConst" value="6.674" step="0.001">
+        </div>
+        <button onclick="updateCircleProperties()">Update Circles</button>
+    </div>
+    <canvas id="simulation" width="800" height="600"></canvas>
+    <script src="script.js"></script>
 </body>
 </html>
