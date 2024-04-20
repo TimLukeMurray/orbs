@@ -11,6 +11,7 @@ function setup() {
 
 function draw() {
     background(255);
+    predator.behave(flock);
     predator.move();
     predator.display();
     for (let boid of flock) {
@@ -109,16 +110,16 @@ class Boid {
     }
 
     avoid(predator) {
-        let perceptionRadius = 100;  // Increase perception radius for predator
+        let perceptionRadius = 100;
         let steering = createVector();
         let d = dist(this.position.x, this.position.y, predator.position.x, predator.position.y);
         if (d < perceptionRadius) {
             let diff = p5.Vector.sub(this.position, predator.position);
-            diff.div(d);  // Repel more strongly when closer
+            diff.div(d);
             steering.add(diff);
             steering.setMag(this.maxSpeed);
             steering.sub(this.velocity);
-            steering.limit(this.maxForce * 5);  // Increase the force when avoiding the predator
+            steering.limit(this.maxForce * 5);
         }
         this.acceleration.add(steering);
     }
@@ -156,11 +157,6 @@ class Predator {
 
     move() {
         this.position.add(this.velocity);
-        // Change direction randomly
-        if (random(100) < 2) {
-            this.velocity = p5.Vector.random2D();
-            this.velocity.setMag(random(3, 5));
-        }
         // Wrap around edges of the canvas
         if (this.position.x > width) {
             this.position.x = 0;
@@ -178,5 +174,50 @@ class Predator {
         fill(255, 0, 0);
         noStroke();
         ellipse(this.position.x, this.position.y, 20, 20);
+    }
+
+    behave(boids) {
+        if (random(100) < 2) {
+            let centroid = this.findLargestGroupCentroid(boids);
+            this.steerTowards(centroid);
+        }
+    }
+
+    findLargestGroupCentroid(boids) {
+        let perceptionRadius = 50;
+        let groups = [];
+        let visited = new Array(boids.length).fill(false);
+
+        for (let i = 0; i < boids.length; i++) {
+            if (!visited[i]) {
+                let stack = [boids[i]];
+                let group = [];
+                while (stack.length > 0) {
+                    let current = stack.pop();
+                    group.push(current);
+                    visited[boids.indexOf(current)] = true;
+                    for (let other of boids) {
+                        if (!visited[boids.indexOf(other)] && p5.Vector.dist(current.position, other.position) < perceptionRadius) {
+                            stack.push(other);
+                            visited[boids.indexOf(other)] = true;
+                        }
+                    }
+                }
+                groups.push(group);
+            }
+        }
+
+        let largestGroup = groups.reduce((lg, g) => g.length > lg.length ? g : lg, []);
+        let centroid = createVector(0, 0);
+        for (let boid of largestGroup) {
+            centroid.add(boid.position);
+        }
+        centroid.div(largestGroup.length);
+        return centroid;
+    }
+
+    steerTowards(centroid) {
+        this.velocity = p5.Vector.sub(centroid, this.position);
+        this.velocity.setMag(random(3, 5)); // Set velocity towards centroid with current speed
     }
 }
