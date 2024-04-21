@@ -7,7 +7,7 @@ function setup() {
         flock.push(new Boid());
     }
     // Create 2 predators
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 4; i++) {
         predators.push(new Predator());
     }
 }
