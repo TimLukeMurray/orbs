@@ -1,26 +1,45 @@
 let flock = [];
-let predator;
+let predators = [];
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
     for (let i = 0; i < 100; i++) {
         flock.push(new Boid());
     }
-    predator = new Predator();
+    // Create 2 predators
+    for (let i = 0; i < 20; i++) {
+        predators.push(new Predator());
+    }
 }
 
 function draw() {
     background(255);
-    predator.behave(flock);
-    predator.move();
-    predator.display();
-    for (let boid of flock) {
-        boid.edges();
-        boid.flock(flock);
-        boid.avoid(predator);
-        boid.update();
-        boid.show();
+    for (let predator of predators) {
+        predator.behave(flock);
+        predator.move();
+        predator.display();
     }
+    for (let i = flock.length - 1; i >= 0; i--) {
+        flock[i].edges();
+        flock[i].flock(flock);
+        flock[i].update();
+        flock[i].show();
+        for (let predator of predators) {
+            if (flock[i].checkPredatorCollision(predator)) {
+                flock.splice(i, 1);
+                continue;
+            }
+            flock[i].avoid(predator);
+        }
+    }
+    displayBoidCount();
+}
+
+function displayBoidCount() {
+    fill(0);
+    noStroke();
+    textSize(16);
+    text("Active Boids: " + flock.length, 10, 30);
 }
 
 class Boid {
@@ -31,6 +50,7 @@ class Boid {
         this.acceleration = createVector();
         this.maxForce = 0.2;
         this.maxSpeed = 4;
+        this.size = 8; // Radius for collision detection
     }
 
     edges() {
@@ -124,6 +144,11 @@ class Boid {
         this.acceleration.add(steering);
     }
 
+    checkPredatorCollision(predator) {
+        let d = dist(this.position.x, this.position.y, predator.position.x, predator.position.y);
+        return d < this.size + 10; // 10 is the radius of the predator
+    }
+
     flock(boids) {
         let alignment = this.align(boids);
         let cohesion = this.cohesion(boids);
@@ -157,7 +182,6 @@ class Predator {
 
     move() {
         this.position.add(this.velocity);
-        // Wrap around edges of the canvas
         if (this.position.x > width) {
             this.position.x = 0;
         } else if (this.position.x < 0) {
