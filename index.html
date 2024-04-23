@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flock Simulation</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="sketch.js"></script>
+<meta charset="UTF-8">
+<title>Dynamic Physics Simulator</title>
+<style>
+  canvas { background: #eee; display: block; margin: 0 auto; }
+  #controls { text-align: center; margin-top: 20px; }
+  input, label { margin-right: 5px; }
+  label { font-weight: bold; }
+  .ball-inputs { margin-bottom: 10px; }
+</style>
 </head>
 <body>
-    <h3>Flock Simulation of Birds</h3>
+<canvas id="myCanvas" width="600" height="400"></canvas>
+<div id="controls">
+  <button onclick="startSimulation()">Start Simulation</button>
+  <label for="numBalls">Number of Balls:</label>
+  <input type="number" id="numBalls" value="3" min="1" onchange="generateBallInputs()">
+  <label for="gravitationalConstant">Gravitational Constant G:</label>
+  <input type="number" id="gravitationalConstant" value="0.1" step="0.01">
+  <label for="elasticity">Elasticity (0-1):</label>
+  <input type="number" id="elasticity" value="1" min="0" max="1" step="0.01">
+  <div id="ballInputs"></div>
+</div>
+<script src="simulation.js"></script>
 </body>
 </html>
