@@ -18,7 +18,7 @@ function generateBallInputs() {
             <input type="number" id="angle${i}" placeholder="Angle" value="${Math.floor(Math.random() * 360)}">
             <input type="number" id="velocity${i}" placeholder="Velocity" value="0">
             <input type="number" id="mass${i}" placeholder="Mass" value="10">
-            <input type="number" id="radius${i}" placeholder="Radius" value="2">
+            <input type="number" id="radius${i}" placeholder="Radius" value="10">
         </div>`;
         ballInputs.insertAdjacentHTML('beforeend', html);
     }
